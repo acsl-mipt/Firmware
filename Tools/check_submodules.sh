@@ -56,27 +56,16 @@ then
 else
 	echo "REINITIALIZING GIT SUBMODULES"
 	echo "no git repo found in $1/.git"
-	git submodule sync --recursive;
-	git submodule update --init --recursive $1;
+	git submodule sync
+	git submodule update --init $1
 fi
 
 }
 
-check_git_submodule NuttX
-check_git_submodule Tools/gencpp
-check_git_submodule Tools/genmsg
-check_git_submodule Tools/jMAVSim
-check_git_submodule Tools/sitl_gazebo
-check_git_submodule cmake/cmake_hexagon
-check_git_submodule mavlink/include/mavlink/v1.0
-check_git_submodule src/lib/DriverFramework
-check_git_submodule src/lib/DriverFramework/cmake/cmake_hexagon
-check_git_submodule src/lib/DriverFramework/dspal
-check_git_submodule src/lib/ecl
-check_git_submodule src/lib/matrix
-check_git_submodule src/modules/uavcan/libuavcan
-check_git_submodule unittests/googletest
-check_git_submodule src/drivers/gps/devices
+for sm in `git submodule | cut -c 2- | cut -d' ' -f2`
+do
+  check_git_submodule $sm
+done
 
 exit 0
 
