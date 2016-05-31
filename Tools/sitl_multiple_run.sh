@@ -29,7 +29,7 @@ while [ $n -le $sitl_num ]; do
   touch rootfs/eeprom/parameters
 
   cp ${src_path}/ROMFS/px4fmu_common/mixers/quad_w.main.mix ./
-  cat ${src_path}/${rc_script}_gazebo_iris | sed s/_SIMPORT_/${sim_port}/ | sed s/_MAVPORT_/${mav_port}/g | sed s/_MAVOPORT_/${mav_oport}/ | sed s/_MAVPORT2_/${mav_port2}/ | sed s/_MAVOPORT2_/${mav_oport2}/ > rcS
+  cat ${src_path}/${rc_script}_gazebo_iris | sed s/_SIMPORT_/${sim_port}/ | sed s/_MAVPORT_/${mav_port}/g | sed s/_MAVOPORT_/${mav_oport}/ | sed s/_MAVPORT2_/${mav_port2}/ | sed s/_MAVOPORT2_/${mav_oport2}/ | sed s/_SYSID_/$n/ > rcS
   cd ../
  fi
 
