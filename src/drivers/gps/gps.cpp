@@ -88,7 +88,8 @@
 #include "devices/src/novatel_oemv.h"
 
 
-#define TIMEOUT_5HZ 500
+#define TIMEOUT_2HZ 500
+#define TIMEOUT_0_5HZ 2000
 #define RATE_MEASUREMENT_PERIOD 5000000
 #define GPS_WAIT_BEFORE_READ	20		// ms, wait before reading to save read() calls
 
@@ -768,7 +769,7 @@ GPS::task_main()
 
                 int helper_ret;
 
-                while ((helper_ret = _helper->receive(TIMEOUT_5HZ)) > 0 && !_task_should_exit) {
+                while ((helper_ret = _helper->receive(TIMEOUT_0_5HZ)) > 0 && !_task_should_exit) {
 
                     if (helper_ret & 1) {
                         publish();
