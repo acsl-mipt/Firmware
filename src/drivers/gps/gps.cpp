@@ -769,7 +769,7 @@ GPS::task_main()
 
                 int helper_ret;
 
-                while ((helper_ret = _helper->receive(TIMEOUT_0_5HZ)) > 0 && !_task_should_exit) {
+                while ((helper_ret = _helper->receive(TIMEOUT_2HZ)) > 0 && !_task_should_exit) {
 
                     if (helper_ret & 1) {
                         publish();
