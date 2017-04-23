@@ -249,6 +249,7 @@ volatile bool is_gps1_advertised = false; ///< for the second gps we want to mak
 GPS::GPS(const char *path, gps_driver_mode_t mode, GPSHelper::Interface interface, bool fake_gps,
      bool enable_sat_info, int gps_num) :
     _task_should_exit(false),
+    _baudrate(115200),
     _healthy(false),
     _mode_changed(false),
     _mode(mode),
@@ -738,7 +739,7 @@ GPS::task_main()
 
             /* the Ashtech driver lies about successful configuration and the
              * MTK driver is not well tested, so we really only trust the UBX
-             * driver for an advance publication
+             * and Novatel drivers for an advance publication
              */
             if (_helper->configure(_baudrate, GPSHelper::OutputMode::GPS) == 0) {
 
@@ -802,6 +803,11 @@ GPS::task_main()
 //							mode_str = "UBX";
 //							break;
 //
+//						case GPS_DRIVER_MODE_NOVATEL_OEMV:
+//							mode_str = "NOVATEL";
+//							break;
+//
+//
 //						case GPS_DRIVER_MODE_MTK:
 //							mode_str = "MTK";
 //							break;
@@ -830,6 +836,10 @@ GPS::task_main()
             if (_mode_auto) {
                 switch (_mode) {
                 case GPS_DRIVER_MODE_UBX:
+                    _mode = GPS_DRIVER_MODE_NOVATEL_OEMV;
+                    break;
+
+                case GPS_DRIVER_MODE_NOVATEL_OEMV:
                     _mode = GPS_DRIVER_MODE_MTK;
                     break;
 
@@ -895,6 +905,10 @@ GPS::print_info()
         switch (_mode) {
         case GPS_DRIVER_MODE_UBX:
             PX4_WARN("protocol: UBX");
+            break;
+
+        case GPS_DRIVER_MODE_NOVATEL_OEMV:
+            PX4_WARN("protocol: NOVATEL OEMV");
             break;
 
         case GPS_DRIVER_MODE_MTK:
@@ -1074,8 +1088,11 @@ gps_main(int argc, char *argv[])
 
     if (argc < 2) {
         PX4_ERR("unrecognized command, try 'start', 'stop', 'test', 'reset' or 'status'");
-        PX4_ERR("[-d " GPS_DEFAULT_UART_PORT
-            "][-f (for enabling fake)][-s (to enable sat info)] [-i {spi|uart}] [-p {ubx|mtk|ash|noemv}]");
+        PX4_ERR("[-d " GPS_DEFAULT_UART_PORT "] "
+                "[-f (for enabling fake gps)] "
+                "[-s (to enable sat info)] "
+                "[-i {spi|uart}] "
+                "[-p {ubx|noemv|mtk|ash}]");
         return 1;
     }
 
@@ -1128,17 +1145,23 @@ gps_main(int argc, char *argv[])
 
                 int mode_arg = i + 1;
 
-                if (mode_arg < argc) {
-                    if (!strcmp(argv[mode_arg], "ubx")) {
+                if (mode_arg < argc)
+                {
+                    if (!strcmp(argv[mode_arg], "ubx"))
+                    {
                         mode = GPS_DRIVER_MODE_UBX;
-
-                    } else if (!strcmp(argv[mode_arg], "mtk")) {
-                        mode = GPS_DRIVER_MODE_MTK;
-
-                    } else if (!strcmp(argv[mode_arg], "ash")) {
-                        mode = GPS_DRIVER_MODE_ASHTECH;
-                    } else if (!strcmp(argv[mode_arg], "noemv")) {
+                    }
+                    else if (!strcmp(argv[mode_arg], "noemv"))
+                    {
                         mode = GPS_DRIVER_MODE_NOVATEL_OEMV;
+                    }
+                    else if (!strcmp(argv[mode_arg], "mtk"))
+                    {
+                        mode = GPS_DRIVER_MODE_MTK;
+                    }
+                    else if (!strcmp(argv[mode_arg], "ash"))
+                    {
+                        mode = GPS_DRIVER_MODE_ASHTECH;
                     }
                 }
             }
