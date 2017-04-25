@@ -90,6 +90,7 @@
 
 #define TIMEOUT_2HZ 500
 #define TIMEOUT_0_5HZ 2000
+#define TIMEOUT_0_25HZ 4000
 #define RATE_MEASUREMENT_PERIOD 5000000
 #define GPS_WAIT_BEFORE_READ	20		// ms, wait before reading to save read() calls
 
