@@ -120,7 +120,7 @@ public:
 private:
 
     bool				_task_should_exit;				///< flag to make the main worker task exit
-    int				_serial_fd;					///< serial interface to GPS
+    int                 _serial_fd;					///< serial interface to GPS
     unsigned			_baudrate;					///< current baudrate
     char				_port[20];					///< device / serial port path
     volatile int			_task;						///< worker task
@@ -230,6 +230,9 @@ private:
     void dumpGpsData(uint8_t *data, size_t len, bool msg_to_gps_device);
 
     void initializeCommunicationDump();
+
+    GPS(const GPS&) = delete;
+    GPS &operator=(const GPS&) = delete;
 };
 
 
@@ -250,8 +253,11 @@ volatile bool is_gps1_advertised = false; ///< for the second gps we want to mak
 GPS::GPS(const char *path, gps_driver_mode_t mode, GPSHelper::Interface interface, bool fake_gps,
      bool enable_sat_info, int gps_num) :
     _task_should_exit(false),
+    _serial_fd(0),
     _baudrate(115200),
+    _task(0),
     _healthy(false),
+    _baudrate_changed(false),
     _mode_changed(false),
     _mode(mode),
     _interface(interface),
@@ -1079,14 +1085,6 @@ info()
 int
 gps_main(int argc, char *argv[])
 {
-    /* set to default */
-    const char *device_name = GPS_DEFAULT_UART_PORT;
-    const char *device_name2 = nullptr;
-    bool fake_gps = false;
-    bool enable_sat_info = false;
-    GPSHelper::Interface interface = GPSHelper::Interface::UART;
-    gps_driver_mode_t mode = GPS_DRIVER_MODE_NONE;
-
     if (argc < 2) {
         PX4_ERR("unrecognized command, try 'start', 'stop', 'test', 'reset' or 'status'");
         PX4_ERR("[-d " GPS_DEFAULT_UART_PORT "] "
@@ -1100,7 +1098,15 @@ gps_main(int argc, char *argv[])
     /*
      * Start/load the driver.
      */
-    if (!strcmp(argv[1], "start")) {
+    if (!strcmp(argv[1], "start"))
+    {
+        /* set to default */
+        const char *device_name = GPS_DEFAULT_UART_PORT;
+        const char *device_name2 = nullptr;
+        bool fake_gps = false;
+        bool enable_sat_info = false;
+        GPSHelper::Interface interface = GPSHelper::Interface::UART;
+        gps_driver_mode_t mode = GPS_DRIVER_MODE_NONE;
 
         /* Detect device name (UART port) */
         for (int i = 2; i < argc; i++) {
