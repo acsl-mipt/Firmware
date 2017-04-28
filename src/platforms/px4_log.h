@@ -400,7 +400,8 @@ __END_DECLS
  * Messages that should never be filtered or compiled out
  ****************************************************************************/
 #define PX4_LOG(FMT, ...) 	__px4_log(_PX4_LOG_LEVEL_ALWAYS, FMT, ##__VA_ARGS__)
-#define PX4_INFO(FMT, ...) 	__px4_log_modulename(_PX4_LOG_LEVEL_ALWAYS, FMT, ##__VA_ARGS__)
+//#define PX4_INFO(FMT, ...) 	__px4_log_modulename(_PX4_LOG_LEVEL_ALWAYS, FMT, ##__VA_ARGS__)
+#define PX4_INFO(FMT, ...) 	__px4_log_modulename(_PX4_LOG_LEVEL_WARN, FMT, ##__VA_ARGS__)
 
 #if defined(TRACE_BUILD)
 /****************************************************************************
