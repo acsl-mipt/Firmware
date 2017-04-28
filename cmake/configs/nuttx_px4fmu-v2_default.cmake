@@ -40,7 +40,7 @@ set(config_module_list
 	#drivers/frsky_telemetry
 	modules/sensors
 	#drivers/mkblctrl
-	drivers/px4flow
+	#drivers/px4flow
 	#drivers/oreoled
 	#drivers/vmount
 	drivers/pwm_input
@@ -96,19 +96,19 @@ set(config_module_list
 	#
 	# Estimation modules
 	#
-	#modules/attitude_estimator_q
+	modules/attitude_estimator_q
 	#modules/position_estimator_inav
-	#modules/local_position_estimator
+	modules/local_position_estimator
 	modules/ekf2
 
 	#
 	# Vehicle Control
 	#
-	modules/fw_pos_control_l1
-	modules/fw_att_control
+	#modules/fw_pos_control_l1
+	#modules/fw_att_control
 	modules/mc_att_control
 	modules/mc_pos_control
-	modules/vtol_att_control
+	#modules/vtol_att_control
 
 	#
 	# Logging
