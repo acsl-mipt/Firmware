@@ -43,4 +43,13 @@
  * @group GPS
  */
 PARAM_DEFINE_INT32(GPS_DUMP_COMM, 0);
+/**
+ * GPS request frequency.
+ *
+ * Frequency of requesting position data from GNSS receiver (actual for supplied models).
+ * @min 0.01
+ * @max 20.0
+ * @group GPS
+ */
+PARAM_DEFINE_FLOAT(GPS_REQUEST_FREQ, 20.0f);
 

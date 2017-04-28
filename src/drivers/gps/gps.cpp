@@ -600,6 +600,7 @@ int GPS::setBaudrate(unsigned baud)
 void GPS::initializeCommunicationDump()
 {
     param_t gps_dump_comm_ph = param_find("GPS_DUMP_COMM");
+
     int32_t param_dump_comm;
 
     if (gps_dump_comm_ph == PARAM_INVALID || param_get(gps_dump_comm_ph, &param_dump_comm) != 0) {
@@ -718,6 +719,15 @@ GPS::task_main()
                 _helper = nullptr;
             }
 
+            param_t freqP = param_find("GPS_REQUEST_FREQ");
+
+            float requestFrequency(20.0f);
+
+            if (freqP != PARAM_INVALID)
+            {
+                param_get(freqP, &requestFrequency);
+            }
+
             switch (_mode) {
             case GPS_DRIVER_MODE_NONE:
                 _mode = GPS_DRIVER_MODE_UBX;
@@ -736,7 +746,7 @@ GPS::task_main()
                 break;
 
             case GPS_DRIVER_MODE_NOVATEL_OEMV:
-                _helper = new GPSDriverNovAtelOEMV(&GPS::callback, this, &_report_gps_pos, _p_report_sat_info);
+                _helper = new GPSDriverNovAtelOEMV(&GPS::callback, this, &_report_gps_pos, _p_report_sat_info, requestFrequency);
                 break;
 
             default:
