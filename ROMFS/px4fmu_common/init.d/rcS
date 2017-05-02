@@ -345,7 +345,10 @@ then
 		unset HIL
 	else
 		unset HIL
-		gps start
+		if param compare MAV_USEHILGPS 0
+		then
+			gps start
+		fi
 	fi
 
 	# waypoint storage
