@@ -45,11 +45,12 @@
 #define _PX4_LOG_LEVEL_WARN		2
 #define _PX4_LOG_LEVEL_ERROR		3
 #define _PX4_LOG_LEVEL_PANIC		4
+#define _PX4_LOG_TEMP_WARNING
 
 // Used to silence unused variable warning
 static inline void do_nothing(int level, ...)
 {
-	(void)level;
+    (void)level;
 }
 
 __BEGIN_DECLS
@@ -196,14 +197,14 @@ __END_DECLS
 #ifdef PX4_LOG_COLORIZED_OUTPUT
 #include <unistd.h>
 #define PX4_LOG_COLOR_START \
-	int use_color = isatty(STDOUT_FILENO); \
-	if (use_color) printf("%s", __px4_log_level_color[level]);
+    int use_color = isatty(STDOUT_FILENO); \
+    if (use_color) printf("%s", __px4_log_level_color[level]);
 #define PX4_LOG_COLOR_MODULE \
-	if (use_color) printf(PX4_ANSI_COLOR_GRAY);
+    if (use_color) printf(PX4_ANSI_COLOR_GRAY);
 #define PX4_LOG_COLOR_MESSAGE \
-	if (use_color) printf("%s", __px4_log_level_color[level]);
+    if (use_color) printf("%s", __px4_log_level_color[level]);
 #define PX4_LOG_COLOR_END \
-	if (use_color) printf(PX4_ANSI_COLOR_RESET);
+    if (use_color) printf(PX4_ANSI_COLOR_RESET);
 #else
 #define PX4_LOG_COLOR_START
 #define PX4_LOG_COLOR_MODULE
@@ -226,12 +227,12 @@ __END_DECLS
  * if the first arg/condition is true.
  ****************************************************************************/
 #define __px4_log_named_cond(name, cond, FMT, ...) \
-	__px4__log_printcond(cond,\
-			     "%s " \
-			     FMT\
-			     __px4__log_end_fmt \
-			     ,name, ##__VA_ARGS__\
-			    )
+    __px4__log_printcond(cond,\
+                 "%s " \
+                 FMT\
+                 __px4__log_end_fmt \
+                 ,name, ##__VA_ARGS__\
+                )
 
 /****************************************************************************
  * __px4_log:
@@ -241,12 +242,12 @@ __END_DECLS
  * 	printf("%-5s val is %d\n", __px4_log_level_str[3], val);
  ****************************************************************************/
 #define __px4_log(level, FMT, ...) \
-	__px4__log_printline(level,\
-			     __px4__log_level_fmt \
-			     FMT\
-			     __px4__log_end_fmt \
-			     __px4__log_level_arg(level), ##__VA_ARGS__\
-			    )
+    __px4__log_printline(level,\
+                 __px4__log_level_fmt \
+                 FMT\
+                 __px4__log_end_fmt \
+                 __px4__log_level_arg(level), ##__VA_ARGS__\
+                )
 
 /****************************************************************************
  * __px4_log_modulename:
@@ -258,9 +259,9 @@ __END_DECLS
  ****************************************************************************/
 
 #define __px4_log_modulename(level, fmt, ...) \
-	do { \
-		px4_log_modulename(level, MODULE_NAME, fmt, ##__VA_ARGS__); \
-	} while(0)
+    do { \
+        px4_log_modulename(level, MODULE_NAME, fmt, ##__VA_ARGS__); \
+    } while(0)
 /****************************************************************************
  * __px4_log_timestamp:
  * Convert a message in the form:
@@ -270,15 +271,15 @@ __END_DECLS
  *		hrt_absolute_time(), val);
  ****************************************************************************/
 #define __px4_log_timestamp(level, FMT, ...) \
-	__px4__log_printline(level,\
-			     __px4__log_level_fmt\
-			     __px4__log_timestamp_fmt\
-			     FMT\
-			     __px4__log_end_fmt\
-			     __px4__log_level_arg(level)\
-			     __px4__log_timestamp_arg\
-			     , ##__VA_ARGS__\
-			    )
+    __px4__log_printline(level,\
+                 __px4__log_level_fmt\
+                 __px4__log_timestamp_fmt\
+                 FMT\
+                 __px4__log_end_fmt\
+                 __px4__log_level_arg(level)\
+                 __px4__log_timestamp_arg\
+                 , ##__VA_ARGS__\
+                )
 
 /****************************************************************************
  * __px4_log_timestamp_thread:
@@ -289,17 +290,17 @@ __END_DECLS
  *		hrt_absolute_time(), pthread_self(), val);
  ****************************************************************************/
 #define __px4_log_timestamp_thread(level, FMT, ...) \
-	__px4__log_printline(level,\
-			     __px4__log_level_fmt\
-			     __px4__log_timestamp_fmt\
-			     __px4__log_thread_fmt\
-			     FMT\
-			     __px4__log_end_fmt\
-			     __px4__log_level_arg(level)\
-			     __px4__log_timestamp_arg\
-			     __px4__log_thread_arg\
-			     , ##__VA_ARGS__\
-			    )
+    __px4__log_printline(level,\
+                 __px4__log_level_fmt\
+                 __px4__log_timestamp_fmt\
+                 __px4__log_thread_fmt\
+                 FMT\
+                 __px4__log_end_fmt\
+                 __px4__log_level_arg(level)\
+                 __px4__log_timestamp_arg\
+                 __px4__log_thread_arg\
+                 , ##__VA_ARGS__\
+                )
 
 /****************************************************************************
  * __px4_log_file_and_line:
@@ -310,17 +311,17 @@ __END_DECLS
  *		__px4_log_level_str[3], val, __FILE__, __LINE__);
  ****************************************************************************/
 #define __px4_log_file_and_line(level, FMT, ...) \
-	__px4__log_printline(level,\
-			     __px4__log_level_fmt\
-			     __px4__log_timestamp_fmt\
-			     FMT\
-			     __px4__log_file_and_line_fmt\
-			     __px4__log_end_fmt\
-			     __px4__log_level_arg(level)\
-			     __px4__log_timestamp_arg\
-			     , ##__VA_ARGS__\
-			     __px4__log_file_and_line_arg\
-			    )
+    __px4__log_printline(level,\
+                 __px4__log_level_fmt\
+                 __px4__log_timestamp_fmt\
+                 FMT\
+                 __px4__log_file_and_line_fmt\
+                 __px4__log_end_fmt\
+                 __px4__log_level_arg(level)\
+                 __px4__log_timestamp_arg\
+                 , ##__VA_ARGS__\
+                 __px4__log_file_and_line_arg\
+                )
 
 /****************************************************************************
  * __px4_log_timestamp_file_and_line:
@@ -332,17 +333,17 @@ __END_DECLS
  *		val, __FILE__, __LINE__);
  ****************************************************************************/
 #define __px4_log_timestamp_file_and_line(level, FMT, ...) \
-	__px4__log_printline(level,\
-			     __px4__log_level_fmt\
-			     __px4__log_timestamp_fmt\
-			     FMT\
-			     __px4__log_file_and_line_fmt\
-			     __px4__log_end_fmt\
-			     __px4__log_level_arg(level)\
-			     __px4__log_timestamp_arg\
-			     , ##__VA_ARGS__\
-			     __px4__log_file_and_line_arg\
-			    )
+    __px4__log_printline(level,\
+                 __px4__log_level_fmt\
+                 __px4__log_timestamp_fmt\
+                 FMT\
+                 __px4__log_file_and_line_fmt\
+                 __px4__log_end_fmt\
+                 __px4__log_level_arg(level)\
+                 __px4__log_timestamp_arg\
+                 , ##__VA_ARGS__\
+                 __px4__log_file_and_line_arg\
+                )
 
 /****************************************************************************
  * __px4_log_thread_file_and_line:
@@ -354,17 +355,17 @@ __END_DECLS
  *		val, __FILE__, __LINE__);
  ****************************************************************************/
 #define __px4_log_thread_file_and_line(level, FMT, ...) \
-	__px4__log_printline(level,\
-			     __px4__log_level_fmt\
-			     __px4__log_thread_fmt\
-			     FMT\
-			     __px4__log_file_and_line_fmt\
-			     __px4__log_end_fmt\
-			     __px4__log_level_arg(level)\
-			     __px4__log_thread_arg\
-			     , ##__VA_ARGS__\
-			     __px4__log_file_and_line_arg\
-			    )
+    __px4__log_printline(level,\
+                 __px4__log_level_fmt\
+                 __px4__log_thread_fmt\
+                 FMT\
+                 __px4__log_file_and_line_fmt\
+                 __px4__log_end_fmt\
+                 __px4__log_level_arg(level)\
+                 __px4__log_thread_arg\
+                 , ##__VA_ARGS__\
+                 __px4__log_file_and_line_arg\
+                )
 
 /****************************************************************************
  * __px4_log_timestamp_thread_file_and_line:
@@ -376,19 +377,19 @@ __END_DECLS
  *		pthread_self(), val, __FILE__, __LINE__);
  ****************************************************************************/
 #define __px4_log_timestamp_thread_file_and_line(level, FMT, ...) \
-	__px4__log_printline(level,\
-			     __px4__log_level_fmt\
-			     __px4__log_timestamp_fmt\
-			     __px4__log_thread_fmt\
-			     FMT\
-			     __px4__log_file_and_line_fmt\
-			     __px4__log_end_fmt\
-			     __px4__log_level_arg(level)\
-			     __px4__log_timestamp_arg\
-			     __px4__log_thread_arg\
-			     , ##__VA_ARGS__\
-			     __px4__log_file_and_line_arg\
-			    )
+    __px4__log_printline(level,\
+                 __px4__log_level_fmt\
+                 __px4__log_timestamp_fmt\
+                 __px4__log_thread_fmt\
+                 FMT\
+                 __px4__log_file_and_line_fmt\
+                 __px4__log_end_fmt\
+                 __px4__log_level_arg(level)\
+                 __px4__log_timestamp_arg\
+                 __px4__log_thread_arg\
+                 , ##__VA_ARGS__\
+                 __px4__log_file_and_line_arg\
+                )
 
 
 /****************************************************************************
@@ -437,6 +438,11 @@ __END_DECLS
 #define PX4_PANIC(FMT, ...)	__px4_log_modulename(_PX4_LOG_LEVEL_PANIC, FMT, ##__VA_ARGS__)
 #define PX4_ERR(FMT, ...)	__px4_log_modulename(_PX4_LOG_LEVEL_ERROR, FMT, ##__VA_ARGS__)
 #define PX4_WARN(FMT, ...) 	__px4_log_modulename(_PX4_LOG_LEVEL_WARN,  FMT, ##__VA_ARGS__)
+#ifdef _PX4_LOG_TEMP_WARNING
+    #define PX4_TEMPWARN(FMT, ...) 	__px4_log_modulename(_PX4_LOG_LEVEL_WARN,  FMT, ##__VA_ARGS__)
+#else
+    #define PX4_TEMPWARN(FMT, ...)
+#endif
 #define PX4_DEBUG(FMT, ...) 	__px4_log_omit(_PX4_LOG_LEVEL_DEBUG, FMT, ##__VA_ARGS__)
 
 #endif
