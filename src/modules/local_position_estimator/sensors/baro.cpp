@@ -16,6 +16,7 @@ void BlockLocalPositionEstimator::baroInit()
 
     if (baroMeasure(y) != OK) {
         _baroStats.reset();
+        BlockLocalPositionEstimator::temporaryLog("Baro reinit: reset");
         return;
     }
 
@@ -34,7 +35,6 @@ void BlockLocalPositionEstimator::baroInit()
             _altOrigin = _baroAltOrigin;
         }
     }
-    PX4_TEMPWARN("Baro reinit");
 }
 
 int BlockLocalPositionEstimator::baroMeasure(Vector<float, n_y_baro> &y)

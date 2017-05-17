@@ -17,6 +17,7 @@ void BlockLocalPositionEstimator::landInit()
 
     if (landMeasure(y) != OK) {
         _landCount = 0;
+        BlockLocalPositionEstimator::temporaryLog("Land reinit: reset");
     }
 
     // if finished
@@ -25,7 +26,6 @@ void BlockLocalPositionEstimator::landInit()
         _landInitialized = true;
         _landFault = FAULT_NONE;
     }
-    PX4_TEMPWARN("Land reinit");
 }
 
 int BlockLocalPositionEstimator::landMeasure(Vector<float, n_y_land> &y)

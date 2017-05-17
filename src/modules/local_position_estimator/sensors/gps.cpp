@@ -32,6 +32,7 @@ void BlockLocalPositionEstimator::gpsInit()
 
     if (gpsMeasure(y) != OK) {
         _gpsStats.reset();
+        BlockLocalPositionEstimator::temporaryLog("GPS reinit: reset");
         return;
     }
 
@@ -75,7 +76,6 @@ void BlockLocalPositionEstimator::gpsInit()
                  gpsLonOrigin,
                  double(_gpsAltOrigin));
         }
-        PX4_TEMPWARN("GPS reinit");
     }
 }
 

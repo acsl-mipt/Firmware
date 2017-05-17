@@ -94,6 +94,13 @@ usage(const char *reason)
  */
 int local_position_estimator_main(int argc, char *argv[])
 {
+    param_t logSpammingPtr = param_find("LPE_LOG_SPAMMING");
+    int logSpamming(0);
+    if (logSpammingPtr != PARAM_INVALID)
+    {
+        param_get(logSpammingPtr, &logSpamming);
+    }
+    BlockLocalPositionEstimator::setLogSpamming(logSpamming);
 
     if (argc < 2) {
         usage("missing command");
@@ -116,7 +123,7 @@ int local_position_estimator_main(int argc, char *argv[])
                          local_position_estimator_thread_main,
                          (argv && argc > 2) ? (char *const *) &argv[2] : (char *const *) NULL);
 
-        PX4_TEMPWARN("LPE is started, task id: %d", deamon_task);
+        BlockLocalPositionEstimator::temporaryLog("LPE is started, task id: %d", deamon_task);
 
         return 0;
     }
@@ -124,7 +131,7 @@ int local_position_estimator_main(int argc, char *argv[])
     if (!strcmp(argv[1], "stop")) {
         if (thread_running) {
             PX4_DEBUG("stop");
-            PX4_TEMPWARN("LPE is stopped by command 'stop'");
+            BlockLocalPositionEstimator::temporaryLog("LPE is stopped by command 'stop'");
             thread_should_exit = true;
 
         } else {
@@ -163,7 +170,7 @@ int local_position_estimator_thread_main(int argc, char *argv[])
     while (!thread_should_exit) {
         est.update();
     }
-    PX4_TEMPWARN("LPE exiting by 'thread_should_exit'");
+    BlockLocalPositionEstimator::temporaryLog("LPE exiting by 'thread_should_exit'");
 
     PX4_DEBUG("exiting.");
 

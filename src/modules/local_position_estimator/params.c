@@ -413,3 +413,10 @@ PARAM_DEFINE_FLOAT(LPE_Z_PUB, 1.0f);
  * @decimal 3
  */
 PARAM_DEFINE_FLOAT(LPE_LAND_Z, 0.03f);
+
+/**
+ * Additional debug logs for estimator data
+ *
+ * @group Local Position Estimator
+ */
+PARAM_DEFINE_INT32(LPE_LOG_SPAMMING, 1);

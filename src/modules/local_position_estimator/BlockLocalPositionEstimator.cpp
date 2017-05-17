@@ -20,6 +20,8 @@ static const bool integrate = true; // use accel for integrating
 static const float P_MAX = 1.0e6f; // max allowed value in state covariance
 static const float LAND_RATE = 10.0f; // rate of land detector correction
 
+bool BlockLocalPositionEstimator::_logSpamming = false;
+
 BlockLocalPositionEstimator::BlockLocalPositionEstimator() :
     // this block has no parent, and has name LPE
     SuperBlock(NULL, "LPE"),
@@ -216,11 +218,22 @@ BlockLocalPositionEstimator::BlockLocalPositionEstimator() :
     // intialize parameter dependent matrices
     updateParams();
 
-    PX4_TEMPWARN("LPE Block is initializated");
+    BlockLocalPositionEstimator::temporaryLog("LPE Block is initializated");
 }
 
 BlockLocalPositionEstimator::~BlockLocalPositionEstimator()
 {
+}
+
+void BlockLocalPositionEstimator::setLogSpamming(bool spamming)
+{
+    _logSpamming = spamming;
+}
+
+void BlockLocalPositionEstimator::temporaryLog(const char* fmt)
+{
+    if(_logSpamming)
+        PX4_TEMPWARN(fmt);
 }
 
 Vector<float, BlockLocalPositionEstimator::n_x> BlockLocalPositionEstimator::dynamics(
@@ -239,7 +252,7 @@ void BlockLocalPositionEstimator::update()
     if (ret < 0) {
         /* poll error, count it in perf */
         perf_count(_err_perf);
-        PX4_TEMPWARN("LPEB poll error, code: %d", ret);
+        BlockLocalPositionEstimator::temporaryLog("LPEB poll error, code: %d", ret);
         return;
     }
 
@@ -758,7 +771,7 @@ void BlockLocalPositionEstimator::publishLocalPos()
     }
     else
     {
-        PX4_TEMPWARN("Bad local position data (for publishing)");
+        BlockLocalPositionEstimator::temporaryLog("Bad local position data (for publishing)");
     }
 }
 
@@ -843,7 +856,7 @@ void BlockLocalPositionEstimator::publishGlobalPos()
     }
     else
     {
-        PX4_TEMPWARN("Bad gloabal position data (for publishing)");
+        BlockLocalPositionEstimator::temporaryLog("Bad gloabal position data (for publishing)");
     }
 }
 
@@ -864,7 +877,7 @@ void BlockLocalPositionEstimator::initP()
     _P(X_bz, X_bz) = 1e-6;
     _P(X_tz, X_tz) = 2 * EST_STDDEV_TZ_VALID * EST_STDDEV_TZ_VALID;
 
-    PX4_TEMPWARN("P matrix is initializated");
+    BlockLocalPositionEstimator::temporaryLog("P matrix is initializated");
 }
 
 void BlockLocalPositionEstimator::initSS()
