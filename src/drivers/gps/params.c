@@ -43,6 +43,7 @@
  * @group GPS
  */
 PARAM_DEFINE_INT32(GPS_DUMP_COMM, 0);
+
 /**
  * GPS request frequency.
  *
@@ -53,3 +54,30 @@ PARAM_DEFINE_INT32(GPS_DUMP_COMM, 0);
  */
 PARAM_DEFINE_FLOAT(GPS_REQUEST_FREQ, 20.0f);
 
+/**
+ * External COM port for NovAtel GPS receiver.
+ *
+ * Zero-value - turn off external port.
+ * @min 0
+ * @max 3
+ * @group GPS
+ */
+PARAM_DEFINE_INT32(GPS_NVTL_EXTPORT, 1);
+
+/**
+ * External COM port baudrate for NovAtel GPS receiver.
+ *
+ * @min 300
+ * @max 230400
+ * @group GPS
+ */
+PARAM_DEFINE_INT32(GPS_NVTL_EXTBAUD, 115200);
+
+/**
+ * External COM port request frequency for NovAtel GPS receiver.
+ *
+ * @min 0.01
+ * @max 20.0
+ * @group GPS
+ */
+PARAM_DEFINE_FLOAT(GPS_NVTL_EXTFREQ, 20.0f);
