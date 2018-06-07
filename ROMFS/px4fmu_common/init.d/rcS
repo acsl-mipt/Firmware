@@ -577,7 +577,15 @@ then
 		fi
 		if param compare SYS_COMPANION 921600
 		then
-			mavlink start -d $MAVLINK_COMPANION_DEVICE -b 921600 -m onboard -r 10000 -x
+			mavlink start -d $MAVLINK_COMPANION_DEVICE -b 921600 -m magic -r 10000 -x
+			mavlink stream -r 1 -s SYS_STATUS -d $MAVLINK_COMPANION_DEVICE
+			mavlink stream -r 2 -s EXTENDED_SYS_STATE -d $MAVLINK_COMPANION_DEVICE
+			mavlink stream -r 5 -s ATTITUDE -d $MAVLINK_COMPANION_DEVICE
+			mavlink stream -r 5 -s RC_CHANNELS -d $MAVLINK_COMPANION_DEVICE
+			mavlink stream -r 5 -s GPS_RAW_INT -d $MAVLINK_COMPANION_DEVICE
+			mavlink stream -r 20 -s GLOBAL_POSITION_INT -d $MAVLINK_COMPANION_DEVICE
+			mavlink stream -r 1 -s SYSTEM_TIME -d $MAVLINK_COMPANION_DEVICE
+			mavlink stream -r 10 -s TIMESYNC -d $MAVLINK_COMPANION_DEVICE
 		fi
 		if param compare SYS_COMPANION 57600
 		then
