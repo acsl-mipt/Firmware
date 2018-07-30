@@ -72,6 +72,7 @@
 #include <uORB/topics/mavlink_log.h>
 #include <uORB/topics/optical_flow.h>
 #include <uORB/topics/position_setpoint_triplet.h>
+#include <uORB/topics/satellite_info.h>
 #include <uORB/topics/sensor_combined.h>
 #include <uORB/topics/tecs_status.h>
 #include <uORB/topics/telemetry_status.h>
@@ -1108,6 +1109,69 @@ protected:
 
 			mavlink_msg_gps_raw_int_send_struct(_mavlink->get_channel(), &msg);
 		}
+	}
+};
+
+class MavlinkStreamGPSStatus : public MavlinkStream
+{
+public:
+	const char *get_name() const
+	{
+		return MavlinkStreamGPSStatus::get_name_static();
+	}
+
+	static const char *get_name_static()
+	{
+		return "GPS_STATUS";
+	}
+
+	static uint16_t get_id_static()
+	{
+		return MAVLINK_MSG_ID_GPS_STATUS;
+	}
+
+	uint16_t get_id()
+	{
+		return get_id_static();
+	}
+
+	static MavlinkStream *new_instance(Mavlink *mavlink)
+	{
+		return new MavlinkStreamGPSStatus(mavlink);
+	}
+
+	unsigned get_size()
+	{
+		return MAVLINK_MSG_ID_GPS_STATUS_LEN + MAVLINK_NUM_NON_PAYLOAD_BYTES;
+	}
+
+private:
+	MavlinkOrbSubscription *_gps_sub;
+	uint64_t _gps_time;
+
+	/* do not allow top copying this class */
+	MavlinkStreamGPSStatus(MavlinkStreamGPSStatus &);
+	MavlinkStreamGPSStatus &operator = (const MavlinkStreamGPSStatus &);
+
+protected:
+	explicit MavlinkStreamGPSStatus(Mavlink *mavlink) : MavlinkStream(mavlink),
+		_gps_sub(_mavlink->add_orb_subscription(ORB_ID(satellite_info))),
+		_gps_time(0)
+	{}
+
+	void send(const hrt_abstime t)
+	{
+            struct satellite_info_s info;
+            if (_gps_sub->update(&_gps_time, &info)) {
+                mavlink_gps_status_t msg = {};
+		msg.satellites_visible = info.count;
+		memcpy(&msg.satellite_prn[0], &info.svid[0], sizeof(msg.satellite_prn));
+		memcpy(&msg.satellite_used[0], &info.used[0], sizeof(msg.satellite_used));
+		memcpy(&msg.satellite_elevation[0], &info.elevation[0], sizeof(msg.satellite_elevation));
+		memcpy(&msg.satellite_azimuth[0], &info.azimuth[0], sizeof(msg.satellite_azimuth));
+		memcpy(&msg.satellite_snr[0], &info.snr[0], sizeof(msg.satellite_snr));
+		mavlink_msg_gps_status_send_struct(_mavlink->get_channel(), &msg);
+            }
 	}
 };
 
@@ -3602,6 +3666,7 @@ const StreamListItem *streams_list[] = {
 	new StreamListItem(&MavlinkStreamAttitudeQuaternion::new_instance, &MavlinkStreamAttitudeQuaternion::get_name_static, &MavlinkStreamAttitudeQuaternion::get_id_static),
 	new StreamListItem(&MavlinkStreamVFRHUD::new_instance, &MavlinkStreamVFRHUD::get_name_static, &MavlinkStreamVFRHUD::get_id_static),
 	new StreamListItem(&MavlinkStreamGPSRawInt::new_instance, &MavlinkStreamGPSRawInt::get_name_static, &MavlinkStreamGPSRawInt::get_id_static),
+	new StreamListItem(&MavlinkStreamGPSStatus::new_instance, &MavlinkStreamGPSStatus::get_name_static, &MavlinkStreamGPSStatus::get_id_static),
 	new StreamListItem(&MavlinkStreamSystemTime::new_instance, &MavlinkStreamSystemTime::get_name_static, &MavlinkStreamSystemTime::get_id_static),
 	new StreamListItem(&MavlinkStreamTimesync::new_instance, &MavlinkStreamTimesync::get_name_static, &MavlinkStreamTimesync::get_id_static),
 	new StreamListItem(&MavlinkStreamGlobalPositionInt::new_instance, &MavlinkStreamGlobalPositionInt::get_name_static, &MavlinkStreamGlobalPositionInt::get_id_static),
