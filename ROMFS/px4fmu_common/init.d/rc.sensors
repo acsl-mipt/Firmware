@@ -153,7 +153,7 @@ then
 		then
 		fi
 
-		if mpu9250 start
+		if mpu9250 -R 10 start
 		then
 		fi
 
