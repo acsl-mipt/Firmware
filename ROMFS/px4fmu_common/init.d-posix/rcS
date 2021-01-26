@@ -5,7 +5,11 @@
 # shellcheck disable=SC1091
 . px4-alias.sh
 
-SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+#search path for sourcing px4-vars.sh and px4-params.sh
+PATH="$PATH:etc/init.d-posix"
+
+#user defined variables for instances
+. px4-vars.sh $px4_instance
 
 #
 # Main SITL startup script
@@ -44,7 +48,7 @@ else
 	# Find the matching Autostart ID (file name has the form: [0-9]+_${PX4_SIM_MODEL})
 	# TODO: unify with rc.autostart generation
 	# shellcheck disable=SC2012
-	REQUESTED_AUTOSTART=$(ls "$SCRIPT_DIR" | sed -n 's/^\([0-9][0-9]*\)_'${PX4_SIM_MODEL}'$/\1/p')
+	REQUESTED_AUTOSTART=$(ls etc/init.d-posix | sed -n 's/^\([0-9][0-9]*\)_'${PX4_SIM_MODEL}'$/\1/p')
 	if [ -z "$REQUESTED_AUTOSTART" ]; then
 		echo "Error: Unknown model '$PX4_SIM_MODEL'"
 		exit 1
@@ -107,13 +111,6 @@ fi
 # multi-instance setup
 # shellcheck disable=SC2154
 param set MAV_SYS_ID $((px4_instance+1))
-simulator_tcp_port=$((4560+px4_instance))
-udp_offboard_port_local=$((14580+px4_instance))
-udp_offboard_port_remote=$((14540+px4_instance))
-[ $px4_instance -gt 9 ] && udp_offboard_port_remote=14549 # use the same ports for more than 10 instances to avoid port overlaps
-udp_onboard_payload_port_local=$((14280+px4_instance))
-udp_onboard_payload_port_remote=$((14030+px4_instance))
-udp_gcs_port_local=$((18570+px4_instance))
 
 if [ $AUTOCNF = yes ]
 then
@@ -224,11 +221,14 @@ then
 	param set SYS_AUTOCONFIG 0
 fi
 
+#user defined params for instances
+. px4-params.sh $px4_instance
+
 dataman start
 # only start the simulator if not in replay mode, as both control the lockstep time
 if ! replay tryapplyparams
 then
-	simulator start -c $simulator_tcp_port
+	simulator start $simulator_opts
 fi
 battery_simulator start
 tone_alarm start
@@ -255,23 +255,8 @@ fi
 #
 sh etc/init.d/rc.vehicle_setup
 
-# GCS link
-mavlink start -x -u $udp_gcs_port_local -r 4000000
-mavlink stream -r 50 -s POSITION_TARGET_LOCAL_NED -u $udp_gcs_port_local
-mavlink stream -r 50 -s LOCAL_POSITION_NED -u $udp_gcs_port_local
-mavlink stream -r 50 -s GLOBAL_POSITION_INT -u $udp_gcs_port_local
-mavlink stream -r 50 -s ATTITUDE -u $udp_gcs_port_local
-mavlink stream -r 50 -s ATTITUDE_QUATERNION -u $udp_gcs_port_local
-mavlink stream -r 50 -s ATTITUDE_TARGET -u $udp_gcs_port_local
-mavlink stream -r 50 -s SERVO_OUTPUT_RAW_0 -u $udp_gcs_port_local
-mavlink stream -r 20 -s RC_CHANNELS -u $udp_gcs_port_local
-mavlink stream -r 10 -s OPTICAL_FLOW_RAD -u $udp_gcs_port_local
-
-# API/Offboard link
-mavlink start -x -u $udp_offboard_port_local -r 4000000 -m onboard -o $udp_offboard_port_remote
-
-# Onboard link to camera
-mavlink start -x -u $udp_onboard_payload_port_local -r 4000 -f -m onboard -o $udp_onboard_payload_port_remote
+#user defined mavlink streams
+. px4-mavlink.sh $px4_instance
 
 # execute autostart post script if any
 [ -e "$autostart_file".post ] && sh "$autostart_file".post
