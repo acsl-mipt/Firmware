@@ -8,8 +8,8 @@
 #search path for sourcing px4-vars.sh and px4-params.sh
 PATH="$PATH:etc/init.d-posix"
 
-#user defined variables for instances
-. px4-vars.sh $px4_instance
+#user defined variables for instances can be in PATH
+. rc.vars $px4_instance
 
 #
 # Main SITL startup script
@@ -221,8 +221,8 @@ then
 	param set SYS_AUTOCONFIG 0
 fi
 
-#user defined params for instances
-. px4-params.sh $px4_instance
+#user defined params for instances can be in PATH
+. rc.params $px4_instance
 
 dataman start
 # only start the simulator if not in replay mode, as both control the lockstep time
@@ -255,8 +255,8 @@ fi
 #
 sh etc/init.d/rc.vehicle_setup
 
-#user defined mavlink streams
-. px4-mavlink.sh $px4_instance
+#user defined mavlink streams for instances can be in PATH
+. rc.mavlink $px4_instance
 
 # execute autostart post script if any
 [ -e "$autostart_file".post ] && sh "$autostart_file".post
